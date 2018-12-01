@@ -72,7 +72,7 @@ def get_first_frequency_reached_twice(deltas):
 
 
 def main(*argv):
-    file_path = os.path.join(os.path.dirname(__file__), 'day_01.dat')
+    file_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'day_01.dat')
 
     with open(file_path, 'r') as fp:
         input_ = fp.read()
