@@ -50,12 +50,11 @@ def get_first_frequency_reached_twice(deltas):
     def frequency_occurances(f):
         """Yield the frequency after applying each change."""
 
-        yield f
+        deltas_ = itertools.cycle(deltas)
 
-        for delta in itertools.cycle(deltas):
-            f += delta        
-
+        while True:
             yield f
+            f += next(deltas_)
 
     def is_occurance(n):       
         """Return True if the frequency has been hit for the nth time."""
