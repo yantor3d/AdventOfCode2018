@@ -1,7 +1,10 @@
 """Advent of Code 2018 day 01 - https://adventofcode.com/2018/day/1"""
 
+import collections
+import itertools
 import os 
 import sys 
+
 
 
 def parse_input(input_):
@@ -15,22 +18,57 @@ def parse_input(input_):
         
     """
 
-    return map(int, input_.split())
+    return list(map(int, input_.split()))
 
 
-def get_frequency(deltas, starting_frequency=0):
+def get_frequency(deltas):
     """Get the new frequency.
 
     Args:
         deltas (:obj:`list` of :obj:`int`): Frequency changes to apply
-        starting_frequency (int): Frequency to start at
 
     Returns:
         int
 
     """
 
-    return sum(deltas, starting_frequency)
+    return sum(deltas, 0)
+
+
+def get_first_frequency_reached_twice(deltas):
+    """Get the first frequency that is reached twice when repeating the same
+    frequency changes over and over.
+
+    Args:
+        deltas (:obj:`list` of :obj:`int`): Frequency changes to apply
+
+    Returns:
+        int
+
+    """
+
+    def frequency_occurances(f):
+        """Yield the frequency after applying each change."""
+
+        yield f
+
+        for delta in itertools.cycle(deltas):
+            f += delta        
+
+            yield f
+
+    def is_occurance(n):       
+        """Return True if the frequency has been hit for the nth time."""
+
+        occurances = collections.Counter()
+
+        def count_occurance(f):
+            occurances[f] += 1
+            return occurances[f] == n
+        
+        return count_occurance
+
+    return next(filter(is_occurance(2), frequency_occurances(0)))
 
 
 def main(*argv):
@@ -41,9 +79,11 @@ def main(*argv):
         
     deltas = parse_input(input_)
 
-    new_frequency = get_frequency(deltas, starting_frequency=0)
+    answer_01 = get_frequency(deltas)
+    print(f"Part One: {answer_01}")
 
-    print(new_frequency)
+    answer_02 = get_first_frequency_reached_twice(deltas)    
+    print(f"Part Two: {answer_02}")
 
     return 0
 
