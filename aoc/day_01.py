@@ -5,6 +5,8 @@ import itertools
 import os
 import sys
 
+import aoc.util
+
 
 def parse_input(input_):
     """Parse the puzzle input.
@@ -78,10 +80,7 @@ def get_first_frequency_reached_twice(deltas):
 
 
 def main(*argv):
-    file_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'day_01.dat')
-
-    with open(file_path, 'r') as fp:
-        input_ = fp.read()
+    input_ = aoc.util.get_puzzle_input(1)
 
     deltas = parse_input(input_)
 
