@@ -20,6 +20,21 @@ def parse_input(input_):
     return list(map(int, input_.split()))
 
 
+def incrimental_sum(values, start_at=0):
+    """Calculate the sum of 'start' value (default: 0) plus an iterable of numbers.
+
+    Yields:
+        The sum after each number is added.
+
+    """
+
+    value = start_at
+
+    while True:
+        yield value 
+        value += next(values)
+
+
 def get_frequency(deltas):
     """Get the new frequency.
 
@@ -46,27 +61,20 @@ def get_first_frequency_reached_twice(deltas):
 
     """
 
-    def frequency_occurances(f):
-        """Yield the frequency after applying each change."""
+    result = None
 
-        deltas_ = itertools.cycle(deltas)
+    occurances = collections.Counter()
 
-        while True:
-            yield f
-            f += next(deltas_)
+    frequency = incrimental_sum(itertools.cycle(deltas), start_at=0)
 
-    def is_occurance(n):
-        """Return True if the frequency has been hit for the nth time."""
+    while True:
+        result = next(frequency)
+        occurances[result] += 1 
 
-        occurances = collections.Counter()
-
-        def count_occurance(f):
-            occurances[f] += 1
-            return occurances[f] == n
-
-        return count_occurance
-
-    return next(filter(is_occurance(2), frequency_occurances(0)))
+        if occurances[result] == 2:
+            break
+    
+    return result
 
 
 def main(*argv):
