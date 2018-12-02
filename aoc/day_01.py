@@ -2,9 +2,8 @@
 
 import collections
 import itertools
-import os 
-import sys 
-
+import os
+import sys
 
 
 def parse_input(input_):
@@ -15,7 +14,7 @@ def parse_input(input_):
 
     Returns:
         :obj:`list` of :obj:`int`: A list of positive of negative frequency change values.
-        
+
     """
 
     return list(map(int, input_.split()))
@@ -56,7 +55,7 @@ def get_first_frequency_reached_twice(deltas):
             yield f
             f += next(deltas_)
 
-    def is_occurance(n):       
+    def is_occurance(n):
         """Return True if the frequency has been hit for the nth time."""
 
         occurances = collections.Counter()
@@ -64,7 +63,7 @@ def get_first_frequency_reached_twice(deltas):
         def count_occurance(f):
             occurances[f] += 1
             return occurances[f] == n
-        
+
         return count_occurance
 
     return next(filter(is_occurance(2), frequency_occurances(0)))
@@ -75,13 +74,13 @@ def main(*argv):
 
     with open(file_path, 'r') as fp:
         input_ = fp.read()
-        
+
     deltas = parse_input(input_)
 
     answer_01 = get_frequency(deltas)
     print(f"Part One: {answer_01}")
 
-    answer_02 = get_first_frequency_reached_twice(deltas)    
+    answer_02 = get_first_frequency_reached_twice(deltas)
     print(f"Part Two: {answer_02}")
 
     return 0

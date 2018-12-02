@@ -1,6 +1,6 @@
-import pytest 
+import pytest
 
-import aoc.day_01 
+import aoc.day_01
 
 TEST_DATA_01 = [
     ('+1 -2 +3 +1', 3),
