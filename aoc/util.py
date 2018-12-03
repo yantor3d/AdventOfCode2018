@@ -16,6 +16,6 @@ def get_puzzle_input(day):
     file_path = os.path.join(os.path.dirname(__file__), '..', 'data', file_name)
 
     with open(file_path, 'r') as fp:
-        input_ = fp.read()
+        input_ = fp.readlines()
         
-    return input_.split()
+    return list(map(str.strip, input_))
