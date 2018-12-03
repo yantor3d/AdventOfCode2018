@@ -45,15 +45,16 @@ def rectangle_coverage(rect):
     )
 
 
-def shared_coverage(rectangles):
-    """Return the coordinates of each square inch covered by two or more rectangles.
-
+def count_squares_coverage(rectangles):
+    """Return a map of the number of rectangles covering each square.
 
     Args:
         rectangles (:obj:`list` of :obj:`Rectangle`)
 
     Returns:
-        :obj:`set` of `
+        dict: ((int, int): int)
+            The coordinates of each square inch covered by at least one rectangle,
+            and the number of rectangles covering that square.
 
     """
 
@@ -62,13 +63,53 @@ def shared_coverage(rectangles):
 
     number_of_times_a_square_is_covered = collections.Counter(covered_squares)
 
+    return number_of_times_a_square_is_covered
+
+
+# Part One solution
+def shared_coverage(rectangles):
+    """Return the coordinates of each square inch covered by two or more rectangles.
+
+    Args:
+        rectangles (:obj:`list` of :obj:`Rectangle`)
+
+    Returns:
+        list of (int, int)
+
+    """
+
+    number_of_times_a_square_is_covered = count_squares_coverage(rectangles)
+
     squares_covered_by_two_or_more_rectangles = (
         s for s, n 
         in number_of_times_a_square_is_covered.items()
         if n >= 2
     )
 
-    return len(list(squares_covered_by_two_or_more_rectangles))
+    return list(squares_covered_by_two_or_more_rectangles)
+
+
+# Part Two solution
+def rectangle_without_overlap(rectangles):
+    """Return the rectangle that is not overlapped by any other rectangle.
+
+    Args:
+        rectangles (:obj:`list` of :obj:`Rectangle`)
+
+    Returns:
+        Rectangle
+
+    """
+    
+    squares_coverage = count_squares_coverage(rectangles)
+    number_of_times_a_square_is_covered = squares_coverage.__getitem__
+
+    def is_overlapped(rect):
+        squares = rectangle_coverage(rect)
+        coverage = sum(map(number_of_times_a_square_is_covered, squares))
+        return len(squares) != coverage
+
+    return next(itertools.filterfalse(is_overlapped, rectangles), None)
 
 
 def main():
@@ -76,8 +117,11 @@ def main():
 
     rectangles = list(map(parse_rectangle, input_))
 
-    answer_01 = shared_coverage(rectangles)
+    answer_01 = len(shared_coverage(rectangles))
     print(f"Part one: {answer_01}")
+
+    answer_02 = rectangle_without_overlap(rectangles)
+    print(f"Part one: {answer_02}")
 
 
 if __name__ == "__main__":

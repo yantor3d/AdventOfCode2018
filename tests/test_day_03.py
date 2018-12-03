@@ -61,6 +61,14 @@ def test_01_area_of_rectangle(input_):
 
 def test_01_overlap_of_rectangles():
     rectangles = map(aoc.day_03.parse_rectangle, TEST_01_INPUT)
-    actual = aoc.day_03.shared_coverage(rectangles)
+    actual = len(aoc.day_03.shared_coverage(rectangles))
 
     assert actual == 4
+
+
+def test_02_rectangle_without_overlap():    
+    rectangles = list(map(aoc.day_03.parse_rectangle, TEST_01_INPUT))
+    actual = aoc.day_03.rectangle_without_overlap(rectangles)
+
+    assert actual is not None
+    assert actual.id == 3
