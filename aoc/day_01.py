@@ -2,7 +2,6 @@
 
 import collections
 import itertools
-import os
 import sys
 
 import aoc.util
