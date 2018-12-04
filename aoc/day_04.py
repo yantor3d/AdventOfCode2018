@@ -102,7 +102,7 @@ def get_guard_minutes_alseep(records):
         result[guard_id] += duration_of_nap
         return result[guard_id]
 
-    records = iter(sorted(records, key=operator.attrgetter('timestamp')))
+    records = iter(records)
 
     while True:
         try:
@@ -132,7 +132,7 @@ def get_guard_minute_by_minute(records):
 
     result = collections.defaultdict(collections.Counter)
 
-    records = iter(sorted(records, key=operator.attrgetter('timestamp')))
+    records = iter(records)
     
     while True:
         try:
