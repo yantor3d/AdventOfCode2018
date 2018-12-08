@@ -23,6 +23,7 @@ TEST_GRAPH = {
     'F': ({'C'}, {'E'}),
 }
 
+
 def test_nodes():
     steps = list(map(aoc.day_07.parse_input, TEST_INPUT))
 
@@ -51,6 +52,15 @@ def test_root_node():
 def test_build_order():
     steps = list(map(aoc.day_07.parse_input, TEST_INPUT))
 
-    actual = aoc.day_07.get_build_order(steps)
+    answer, order = aoc.day_07.get_parallel_build_order(steps, 1, 0)
 
-    assert actual == 'CABDFE'
+    assert order == 'CABDFE'
+
+
+def test_parallel_build_order():
+    steps = list(map(aoc.day_07.parse_input, TEST_INPUT))
+
+    answer, order = aoc.day_07.get_parallel_build_order(steps, 2, 0)
+
+    assert answer == 15
+    assert order == 'CABFDE'
