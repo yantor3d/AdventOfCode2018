@@ -61,5 +61,11 @@ def test_non_infinite_area(input_, expected):
     assert areas[input_] == expected
 
 
+def test_area_within_max_distance():
+    actual = aoc.day_06.get_area_within(TEST_DATA, 32)
+
+    assert len(actual) == 16
+
+
 if __name__ == '__main__':
     aoc.day_06.get_area_around_points(TEST_DATA)

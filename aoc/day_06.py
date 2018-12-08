@@ -1,11 +1,7 @@
 import collections
 import functools
 import itertools
-import math
 import operator 
-import sys
-import string
-import time
 
 import aoc.util 
 
@@ -225,7 +221,39 @@ def get_area_around_points(points):
     return result
 
 
+def get_area_within(points, max_distance):
+    """Return an area where each the sum of each point's Manhattan distance to
+    the points is less than the maximum distance.
+
+    Args:
+        points (iterable)
+        max_distance (int)
+        
+    Returns:
+        set of Points
+
+    """
+
+    bb = get_bounding_box(points)
+    bb = expand_bounding_box(bb, 1)
+
+    whole_area = get_points_in_bounding_box(bb)
+
+    result = set()
+
+    for pnt in whole_area:
+        distance_to = functools.partial(distance_between, pnt)
+        distances = [distance_to(p) for p in points]
+
+        if sum(distances) < max_distance:
+            result.add(pnt)
+        
+    return result 
+
+
 def answer_part_01():
+    """Find the size of largest finite area surrounding the coordinates."""
+
     lines = aoc.util.get_puzzle_input(6)
     points = list(map(parse_input, lines))
 
@@ -235,8 +263,24 @@ def answer_part_01():
     print(f"Part One: {answer_01}")
 
 
+def answer_part_02():    
+    """Find the size of the area where the sum of the distances to the 
+    coordinates is under 10,000.
+    
+    """
+
+    lines = aoc.util.get_puzzle_input(6)
+    points = list(map(parse_input, lines))
+
+    area = get_area_within(points, 10000)
+    answer_02 = len(area)
+
+    print(f"Part Two: {answer_02}")
+
+
 def main():
     answer_part_01()
+    answer_part_02()
 
 
 if __name__ == "__main__":
