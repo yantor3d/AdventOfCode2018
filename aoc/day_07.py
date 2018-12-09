@@ -62,7 +62,7 @@ def get_roots(graph):
             yield node
 
 
-def get_parallel_build_order(steps, number_of_worker, minimum_time):
+def get_parallel_build_order(steps, number_of_worker, minimum_time):  # noqa C901
     """Return the order of the steps when executed in parallel.
 
     Args:
