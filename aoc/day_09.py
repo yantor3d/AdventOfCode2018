@@ -113,7 +113,6 @@ class CircleOfMarbles(object):
         return m
 
 
-
 def parse_input(line):
     [(number_of_players, last_marble_worth)] = PUZZLE_INPUT_REGEX.findall(line)
 
