@@ -1,3 +1,5 @@
+"""Advent of Code 2018 day 05 - https://adventofcode.com/2018/day/5"""
+
 import string
 import time 
 
