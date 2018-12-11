@@ -37,7 +37,7 @@ def cell_power_level(x, y, grid_serial_number):
     return power 
 
 
-def grid_power_level(grid, x, y):
+def grid_power_level(grid, x, y, size):
     """Get the power level of the 3x3 square within the grid.
 
     Args:
@@ -52,8 +52,8 @@ def grid_power_level(grid, x, y):
 
     result = 0
 
-    for a in range(3):
-        for b in range(3):
+    for a in range(size):
+        for b in range(size):
             result += grid[x + a, y + b]
 
     return result     
@@ -74,12 +74,12 @@ def make_grid(grid_serial_number):
 
     for x in range(1, 301):
         for y in range(1, 301):
-                result[x, y] = cell_power_level(x, y, grid_serial_number)
+            result[x, y] = cell_power_level(x, y, grid_serial_number)
             
     return result 
 
 
-def find_highest_power_level(grid):
+def find_highest_power_level(grid, size=3):
     """Find the 3x3 square with the highest power level.
 
     Args:
@@ -93,15 +93,15 @@ def find_highest_power_level(grid):
     result = (-1, -1)
     max_power = -sys.maxsize
 
-    for x in range(1, 301 - 3):
-        for y in range(1, 301 - 3):
-            power_level = grid_power_level(grid, x, y)
+    for x in range(1, 301 - size):
+        for y in range(1, 301 - size):
+            power_level = grid_power_level(grid, x, y, size)
 
             if power_level > max_power:
                 max_power = power_level
                 result = (x, y)
 
-    return result    
+    return result, max_power  
 
 
 def answer_part_01():
@@ -113,14 +113,46 @@ def answer_part_01():
     puzzle_input = int(aoc.util.get_puzzle_input(11)[0])
 
     grid = make_grid(puzzle_input)
-    x, y = find_highest_power_level(grid)
+    (x, y), __ = find_highest_power_level(grid)
 
     print(f'Part one: {x},{y}')
 
 
+def answer_part_02():
+    """What is the X,Y,size identifier of the square with the largest total power?"""
+
+    puzzle_input = int(aoc.util.get_puzzle_input(11)[0])
+
+    grid = make_grid(puzzle_input)
+    result = None
+    max_power = -sys.maxsize
+    max_size = None
+
+    n = 0
+    
+    # BRUTE FORCE FOR THE WIN!
+    for i in range(1, 301):
+        (x, y), p = find_highest_power_level(grid, i)
+
+        if p > max_power:
+            result = (x, y)
+            max_power = p
+            max_size = i
+            n = 1
+        else:
+            n -= 1
+
+        if n < -1:
+            break
+
+    x, y = result
+
+    print(f'Part two: {x},{y},{max_size} => {max_power}')
+
+
 def main():
     answer_part_01()
-
+    answer_part_02()
 
 if __name__ == "__main__":
     main()
