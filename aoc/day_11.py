@@ -154,5 +154,6 @@ def main():
     answer_part_01()
     answer_part_02()
 
+
 if __name__ == "__main__":
     main()
