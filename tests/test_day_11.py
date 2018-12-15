@@ -29,7 +29,7 @@ def test_fuel_cell_examples(input_, coordinate, expected):
 def test_top_left_corner_examples(grid_serial_number, x, y, power_level):
     grid = aoc.day_11.make_grid(grid_serial_number)
 
-    actual = aoc.day_11.grid_power_level(grid, x, y,)
+    actual = aoc.day_11.grid_power_level(grid, x, y, 3)
 
     assert actual == power_level
 
