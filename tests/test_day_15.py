@@ -2,7 +2,7 @@ import pytest
 
 import aoc.day_15 
 
-EXAMPLE_01 = (
+INPUT_01 = (
     [
         '#######',
         '#.G...#',
@@ -11,10 +11,13 @@ EXAMPLE_01 = (
         '#..G#E#',
         '#.....#',
         '#######',
-    ], (47, 590, 27730)
+    ]
 )
 
-EXAMPLE_02 = (
+OUTPUT_101 = (47, 590, 27730)
+OUTPUT_201 = (29, 172, 4988)
+
+INPUT_02 = (
     [
         '#######',
         '#G..#E#',
@@ -23,10 +26,12 @@ EXAMPLE_02 = (
         '#...#E#',
         '#...E.#',
         '#######',
-    ], (37, 982, 36334)
+    ]
 )
 
-EXAMPLE_03 = (
+OUTPUT_102 = (37, 982, 36334)
+
+INPUT_03 = (
     [
         '#######',
         '#E..EG#',
@@ -35,10 +40,13 @@ EXAMPLE_03 = (
         '#G..#.#',
         '#..E#.#',
         '#######',
-    ], (46, 859, 39514)
+    ]
 )
 
-EXAMPLE_04 = (
+OUTPUT_103 = (46, 859, 39514)
+OUTPUT_203 = (33, 948, 31284)
+
+INPUT_04 = (
     [
         '#######',
         '#E.G#.#',
@@ -47,10 +55,13 @@ EXAMPLE_04 = (
         '#G..#.#',
         '#...E.#',
         '#######',
-    ], (35, 793, 27755)
+    ]
 )
 
-EXAMPLE_05 = (
+OUTPUT_104 = (35, 793, 27755)
+OUTPUT_204 = (37, 94, 3478)
+
+INPUT_05 = (
     [
         '#######',
         '#.E...#',
@@ -59,10 +70,13 @@ EXAMPLE_05 = (
         '#E#G#G#',
         '#...#G#',
         '#######',
-    ], (54, 536, 28944)
+    ]
 )
 
-EXAMPLE_06 = (
+OUTPUT_105 = (54, 536, 28944)
+OUTPUT_205 = (39, 166, 6474)
+
+INPUT_06 = (
     [
         '#########',
         '#G......#',
@@ -73,23 +87,41 @@ EXAMPLE_06 = (
         '#.G...G.#',
         '#.....G.#',
         '#########',
-    ], (20, 937, 18740)
+    ]
 )
 
-EXAMPLES = [
-    EXAMPLE_01,
-    EXAMPLE_02,
-    EXAMPLE_03,
-    EXAMPLE_04,
-    EXAMPLE_05,
-    EXAMPLE_06,
+OUTPUT_106 = (20, 937, 18740)
+OUTPUT_206 = (30, 38, 1140)
+
+EXAMPLES_1 = [
+    (INPUT_01, OUTPUT_101),
+    (INPUT_02, OUTPUT_102),
+    (INPUT_03, OUTPUT_103),
+    (INPUT_04, OUTPUT_104),
+    (INPUT_05, OUTPUT_105),
+    (INPUT_06, OUTPUT_106),
 ]
 
+EXAMPLES_2 = [
+    (INPUT_01, 15, OUTPUT_201),
+    (INPUT_03, 4,  OUTPUT_203),
+    (INPUT_04, 15, OUTPUT_204),
+    (INPUT_05, 12, OUTPUT_205),
+    (INPUT_06, 34, OUTPUT_206),
+]
 
-@pytest.mark.parametrize('input_,expected', EXAMPLES)
-def test_example_game(input_,expected):
+@pytest.mark.parametrize('input_,expected', EXAMPLES_1)
+def test_example_01_games(input_, expected):
     game = aoc.day_15.parse_input(input_)
 
     actual = game.play()
+
+    assert actual == expected
+
+
+@pytest.mark.parametrize('input_,cheat,expected', EXAMPLES_2)
+def test_example_02_games(input_, cheat, expected):
+    game = aoc.day_15.parse_input(input_)
+    actual = game.play(cheat)
 
     assert actual == expected
