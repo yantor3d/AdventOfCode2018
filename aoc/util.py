@@ -1,20 +1,20 @@
 import os 
 
 
-def get_puzzle_input(day, raw=False, test_data=False):
+def get_puzzle_input(day, raw=False, suffix=None):
     """Return the input of the puzzle.
     
     Args:
         day (int): The number of the puzzle.
-        test_data (bool): If True, return the test data for the puzzle.
+        suffix (str): Optional suffix to add to the data file name
 
     Returns:
         :obj:`list` of :obj:`str`
 
     """
 
-    if test_data:
-        file_name = 'day_{:02d}.{}.dat'.format(day, test_data)
+    if suffix:
+        file_name = 'day_{:02d}.{}.dat'.format(day, suffix)
     else:
         file_name = 'day_{:02d}.dat'.format(day)
 
