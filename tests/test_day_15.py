@@ -104,11 +104,12 @@ EXAMPLES_1 = [
 
 EXAMPLES_2 = [
     (INPUT_01, 15, OUTPUT_201),
-    (INPUT_03, 4,  OUTPUT_203),
+    (INPUT_03, +4, OUTPUT_203),
     (INPUT_04, 15, OUTPUT_204),
     (INPUT_05, 12, OUTPUT_205),
     (INPUT_06, 34, OUTPUT_206),
 ]
+
 
 @pytest.mark.parametrize('input_,expected', EXAMPLES_1)
 def test_example_01_games(input_, expected):

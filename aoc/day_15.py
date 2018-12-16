@@ -1,7 +1,7 @@
+"""Advent of Code 2018 day 15 - https://adventofcode.com/2018/day/15"""
+
 import collections
-import operator
 import queue
-import sys
 import string 
 import time 
 
@@ -29,10 +29,19 @@ class Actor(object):
         return self.id 
 
     def __str__(self):
-        return '{}{}({:>3d}/{:>3d})'.format(self.type, self.name(), self.attack_points, self.hit_points)
+        return '{}{}({:>3d}/{:>3d})'.format(
+            self.type, 
+            self.name(), 
+            self.attack_points, 
+            self.hit_points
+        )
 
     def name(self):
-        id_ = (string.ascii_uppercase if self.type == ELF else string.ascii_lowercase)[self.id]
+        id_ = (
+            string.ascii_uppercase 
+            if self.type == ELF 
+            else string.ascii_lowercase
+        )[self.id]
         return '({})'.format(id_) if self.type == ELF else '[{}]'.format(id_)
 
 
@@ -187,7 +196,7 @@ class Game(object):
             this_cost = distances[this_tile]
 
             for next_tile in adjacent(this_tile):
-                if not next_tile in self.tiles:
+                if next_tile not in self.tiles:
                     continue 
 
                 if next_tile in occupied:
@@ -218,7 +227,7 @@ class Game(object):
 
             next_tiles = [
                 n for n in adjacent(this_tile) 
-                if distances.get(n, -10) == cost 
+                if distances.get(n, -10) == cost
                 and n not in path 
             ]
 
@@ -323,7 +332,7 @@ def part_01():
     __, __, score = game.play()
     elapsed_time = time.time() - start_time
 
-    print (f'Part one: {score} took {elapsed_time:0.2f} seconds')
+    print(f'Part one: {score} took {elapsed_time:0.2f} seconds')
 
 
 def part_02():
@@ -338,11 +347,11 @@ def part_02():
     __, __, score = game.play(power)        
     elapsed_time = time.time() - start_time
 
-    print (f'Part two: {score} took {elapsed_time:0.2f} seconds')
+    print(f'Part two: {score} took {elapsed_time:0.2f} seconds')
 
 
 def main():
-    # part_01()
+    part_01()
     part_02()
 
 
