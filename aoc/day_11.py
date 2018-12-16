@@ -1,4 +1,4 @@
-"""Advent of Code 2018 day 10 - https://adventofcode.com/2018/day/10"""
+"""Advent of Code 2018 day 11 - https://adventofcode.com/2018/day/11"""
 
 import collections
 import sys 
