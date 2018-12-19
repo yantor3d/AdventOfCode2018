@@ -1,4 +1,4 @@
-"""Advent of Code 2018 day 14 - https://adventofcode.com/2018/day/14""
+"""Advent of Code 2018 day 14 - https://adventofcode.com/2018/day/14"""
 
 import aoc.util 
 import time 
