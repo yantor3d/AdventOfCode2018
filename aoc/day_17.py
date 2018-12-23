@@ -3,13 +3,15 @@ import itertools
 import queue
 import time 
 import sys 
-import operator
 
 import aoc.util 
 
 Point = collections.namedtuple('Point', 'x y')
 Drop = collections.namedtuple('Drop', 'position direction')
 
+FLOW_DOWN = Point(0, 1)
+FLOW_LEFT = Point(-1, 0)
+FLOW_RIGHT = Point(1, 0)
 
 
 def parse_scan(v):
@@ -44,30 +46,32 @@ def parse_input(lines):
     return result
 
 
-def print_it(clay, damp_sand, the_water, water):
+def print_it(clay, damp_sand, the_water, water=None):
     xs = [p.x for p in clay]
     ys = [p.y for p in clay]
 
     nx, ny = min(xs), min(ys)
     mx, my = max(xs), max(ys) 
 
-    lines = [['.' for _ in range(-1, mx - nx + 10)] for _ in range(-1, my - ny + 1)]
+    lines = [['.' for _ in range(mx - nx + 10)] for _ in range(my + 1)]
 
     for p in clay:
-        lines[p.y - ny + 1][p.x - nx + 1] = '#'
+        lines[p.y][p.x - nx + 1] = '#'
 
     for p in damp_sand:
-        lines[p.y - ny + 1][p.x - nx + 1] = '|'
+        lines[p.y][p.x - nx + 1] = '|'
 
     for p in the_water:
-        lines[p.y - ny + 1][p.x - nx + 1] = '~'
+        lines[p.y][p.x - nx + 1] = '~'
 
     lines[0][500 - nx + 1] = '+'
-    lines[water.y - ny + 1][water.x - nx + 1] = 'X'
+
+    if water is not None:
+        lines[water.y - ny + 1][water.x - nx + 1] = 'X'
 
     text = '\n'.join([''.join(line) for line in lines])
 
-    with open('C:/Users/rporter/Desktop/out.txt', 'w') as fp:
+    with open('out.txt', 'w') as fp:
         fp.write(text)
         
     # print('')
@@ -76,14 +80,17 @@ def print_it(clay, damp_sand, the_water, water):
 
 class Scan(object):
     def __init__(self, clay):
-        self.clay = clay # {c for c in clay if c.y < 1700}
+        self.clay = clay
 
         self.damp_sand = set() 
         self.the_water = set()
 
-        self.col_cache = {}
-        self.row_cache = {}
+        self.last_drop = set()
+
+        self.states = collections.deque(maxlen=20)
+
         self.flowing_water = queue.Queue()
+        self.stack = collections.deque()
 
         self.edge_of_the_map_x = max([p.x for p in self.clay]) + 1
         self.edge_of_the_map_y = max([p.y for p in self.clay])
@@ -167,55 +174,64 @@ class Scan(object):
                     flowing.add(f) 
 
         return pooled, flowing
-                    
-    def find_water(self):    
-        for P in self.damp_sand:
-            if P in self.the_water:
+                
+    def is_finished(self):
+        last_state = self.states[-1]
+
+        for state in self.states:
+            if state != last_state:
+                return False
+        else:
+            max_y = max([p.y for p in self.damp_sand])
+
+            return max_y >= self.edge_of_the_map_y - 1
+
+    def back_track(self):
+        while True:
+            if not self.stack:
+                break
+
+            water = self.stack.pop()
+
+            if water in self.the_water:
                 continue 
 
-            b = Point(P.x, P.y + 1)
+            if water in self.last_drop:
+                continue
 
-            if b.y > self.edge_of_the_map_y:
-                continue 
-
-            L = Point(P.x + 1, P.y)
-            R = Point(P.x - 1, P.y)
-
-            if not b in self.clay:
-                if not b in self.damp_sand:
-                    self.flowing_water.put(P)
-                    return True
-
-            if b in self.the_water:
-                if L in self.damp_sand and R in self.damp_sand:
-                    continue 
-                
-                if L in self.damp_sand and R in self.clay:
-                    continue 
-
-                if L in self.clay and R in self.damp_sand:
-                    continue 
-                
-                self.flowing_water.put(P)
-                return True
-
-        return False 
+            self.flowing_water.put(water)
+            break 
 
     def simulate(self):
-        self.flowing_water.put(Point(500, 1))
+        self.flowing_water.put(Point(500, 1)) 
 
-        p = -1 
+        p = -1
+
+        start_time = time.time()
+        elapsed_time = 0.0
 
         while True:
+            state = len(self.damp_sand | self.the_water)
+            self.states.append(state)
+
             if self.flowing_water.empty():
-                if not self.find_water():
-                    print("Nothing...")
-                    break 
+                self.damp_sand -= self.the_water
+                
+                if self.is_finished():
+                    break
+                else:
+                    self.back_track()
+
+            if self.flowing_water.empty():
+                break 
 
             water = self.flowing_water.get()
 
             if water in self.the_water:
                 continue 
+            
+            if water in self.last_drop:
+                continue
 
             self.damp_sand.add(water)
 
@@ -223,59 +239,100 @@ class Scan(object):
 
             self.damp_sand.update(flow)
                     
-            if fall:
+            if fall:  # water fell off the edge of the map
                 fall = [f for f in fall if f.y < self.edge_of_the_map_y]
                 self.damp_sand.update(fall)
-            else:
+                self.last_drop.add(water)
+            else:  # water fell onto clay or pooled water
+                self.stack.append(water)
                 flow = sorted(flow, key=lambda p: p.y, reverse=True)    
 
-                for water in flow:
-                    if water in self.the_water:
+                for f in flow:
+                    if f in self.the_water:
                         continue 
 
-                    fill, fall = self.fill_row(water)
+                    fill, fall = self.fill_row(f)
                     
                     self.damp_sand.update(fill)
                     self.damp_sand.update(fall)
 
-                    if not fall:
+                    if fall:  # water has overflowed a container
+                        for each in fall:
+                            self.flowing_water.put(each)
+                        break 
+                    else:
                         self.the_water.update(fill)
+                else:  
+                    # Find where the water is pouring into the container from and resume the pour. 
+                    up = Point(f.x, f.y - 1)
 
-                    for each in fall:
-                        self.flowing_water.put(each)
+                    fill, fall = self.fill_row(up)
 
                     if fall:
-                        break 
+                        self.damp_sand.update(fill)
 
-            progress = max([p.y for p in self.the_water])
-            percent = int((progress / self.edge_of_the_map_y) * 100)
+                        for each in fall:
+                            self.flowing_water.put(each)
+                    else:
+                        for f in fill:
+                            if f in self.damp_sand:
+                                self.flowing_water.put(f)
+                                break
+
+            max_y = max([p.y for p in self.the_water])
+            percent = int((max_y / self.edge_of_the_map_y) * 100)
 
             if percent > p:
-                print(f"{percent:<2d}%", len(self.damp_sand | self.the_water))
+                elapsed_time = time.time() - start_time
+                percent_str = f' {percent:>3d}% '
+                progress_str = f'{percent_str:^100}'
+                progress_bar = list(progress_str)
 
-                #if percent % 5 == 0:
-                print_it(self.clay, self.damp_sand, self.the_water, water)
+                for i, c in enumerate(progress_bar):
+                    if c == ' ' and i < percent:
+                        progress_bar[i] = '='
 
+                progress_bar = ''.join(progress_bar)
+                progress_bar = f'\r[{progress_bar}] {elapsed_time:8.2f}'
+                sys.stdout.write(progress_bar)
+                sys.stdout.flush()
+                
             p = percent
 
-        print_it(self.clay, self.damp_sand, self.the_water, water)
+        min_y = min([p.y for p in self.clay])
+        max_y = max([p.y for p in self.clay])
 
-        return len(self.damp_sand | self.the_water)
-        
-        
-def answer_part_01():
-    puzzle_input = aoc.util.get_puzzle_input(17)
-    clay = parse_input(puzzle_input)
+        self.damp_sand = {
+            w for w in self.damp_sand
+            if (min_y <= w.y <= max_y)
+        }
 
-    start_time = time.time()
-    answer = Scan(clay).simulate()
-    elapsed_time = time.time() - start_time 
-
-    print(f'Part one: {answer} (took {elapsed_time:.2f} seconds)')
+        return self.damp_sand, self.the_water
 
 
 def main():
-    answer_part_01()
+    """
+    Part one: 
+        How many tiles can the water reach within the range of y values in your scan?
+    Part two: 
+        How many water tiles are left after the water spring stops producing 
+        water and all remaining water not at rest has drained?
+
+    """
+
+    puzzle_input = aoc.util.get_puzzle_input(17)
+    clay = parse_input(puzzle_input)
+    start_time = time.time()
+    damp, wet = Scan(clay).simulate()
+    elapsed_time = time.time() - start_time 
+
+    answer_01 = len(damp | wet)
+    answer_02 = len(wet)
+
+    print('')
+    print(f'Part one: {answer_01}')
+    print(f'Part two: {answer_02}')
+    print(f'Took {elapsed_time:.2f} seconds)')
 
 
 if __name__ == "__main__":

@@ -1,4 +1,3 @@
-import pytest
 import aoc.day_17 
 
 EXAMPLE_INPUT = [
@@ -16,6 +15,16 @@ EXAMPLE_INPUT = [
 def test_example_01():
     clay = aoc.day_17.parse_input(EXAMPLE_INPUT)
 
-    actual = aoc.day_17.Scan(clay).simulate()
+    damp, wet = aoc.day_17.Scan(clay).simulate()
+    actual = len(damp | wet)
 
     assert actual == 57
+
+
+def test_example_02():
+    clay = aoc.day_17.parse_input(EXAMPLE_INPUT)
+
+    damp, wet = aoc.day_17.Scan(clay).simulate()
+    actual = len(wet)
+
+    assert actual == 29
