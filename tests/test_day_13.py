@@ -3,19 +3,25 @@ import aoc.util
 
 
 def test_example_01():
-    puzzle_input = aoc.util.get_puzzle_input(13, raw=True, suffix='test_01')
-    mine = aoc.day_13.parse_input(puzzle_input)
+    try:
+        puzzle_input = aoc.util.get_puzzle_input(13, raw=True, suffix='test_01')
+    except FileNotFoundError:
+        pass 
+    else:
+        mine = aoc.day_13.parse_input(puzzle_input)
+        actual = aoc.day_13.simulate(mine)
 
-    actual = aoc.day_13.simulate(mine)
-    
-    assert actual == (7, 3)
+        assert actual == (7, 3)
 
 
 def test_example_02():
-    puzzle_input = aoc.util.get_puzzle_input(13, raw=True, suffix='test_02')
-    mine = aoc.day_13.parse_input(puzzle_input)
-    mine.remove_collisions = True
-
-    actual = aoc.day_13.simulate(mine)
+    try:
+        puzzle_input = aoc.util.get_puzzle_input(13, raw=True, suffix='test_02')
+    except FileNotFoundError:
+        pass
+    else:
+        mine = aoc.day_13.parse_input(puzzle_input)
+        mine.remove_collisions = True
+        actual = aoc.day_13.simulate(mine)
     
-    assert actual == (6, 4)
+        assert actual == (6, 4)

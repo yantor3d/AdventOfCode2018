@@ -14,4 +14,4 @@ TEST_EXAMPLES = (
 def test_example_01(input_,expected):
     actual = aoc.day_20.route_lengths(input_[1:-1])
 
-    assert len(actual) == expected
+    assert max(actual) == expected
